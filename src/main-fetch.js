@@ -3,7 +3,7 @@ const { readConfig, writeConfig, formatConfig } = require("./config");
 const { getLastPrCreated } = require("./github");
 const { storePullRequest } = require("./pull-request");
 
-async function main(org, repo, baseStoragePath, configFilename) {
+async function fetch(org, repo, baseStoragePath, configFilename) {
   const storagePath = path.join(baseStoragePath, repo);
   const configPath = path.join(storagePath, configFilename);
 
@@ -31,4 +31,4 @@ async function main(org, repo, baseStoragePath, configFilename) {
   }
 }
 
-module.exports = { main };
+module.exports = { fetch };
