@@ -11,9 +11,13 @@ async function fetch(org, repo, baseStoragePath, configFilename) {
 
   // update open pull requests
   for (let openPrNumber of config.openPrs || []) {
-    await storePullRequest(org, repo, openPrNumber, storagePath);
+    const pr = await storePullRequest(org, repo, openPrNumber, storagePath);
 
-    config.openPrs = config.openPrs.filter((x) => x !== openPrNumber);
+    // if the PR is no longer open, remove it from the array
+    if (pr.pullRequest.state !== "open") {
+      config.openPrs = config.openPrs.filter((x) => x !== openPrNumber);
+    }
+
     await writeConfig(configPath, config);
   }
 
