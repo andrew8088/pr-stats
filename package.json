@@ -1,0 +1,19 @@
+{
+  "name": "pr-stats",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrew8088/pr-stats.git"
+  },
+  "author": "Andrew Burgess",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrew8088/pr-stats/issues"
+  },
+  "homepage": "https://github.com/andrew8088/pr-stats#readme"
+}
