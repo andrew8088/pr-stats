@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/andrew8088/pr-stats/issues"
   },
-  "homepage": "https://github.com/andrew8088/pr-stats#readme"
+  "homepage": "https://github.com/andrew8088/pr-stats#readme",
+  "dependencies": {
+    "@octokit/rest": "^18.0.0"
+  }
 }
