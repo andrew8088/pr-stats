@@ -1,5 +1,5 @@
 const path = require("path");
-const { writeFile, readFile } = require("./util");
+const { writeFile, readFile, toDateString } = require("./util");
 const { Parser } = require("json2csv");
 
 const fields = [
@@ -37,7 +37,7 @@ async function convertToCsv(
       await readFile(path.join(storagePath, fromFilename))
     );
     const parser = new Parser({ fields });
-    const csv = parser.parse(flattenArrays(data));
+    const csv = parser.parse(transformForCsv(data));
 
     await writeFile(path.join(storagePath, toFilename), csv);
   } catch (err) {
@@ -45,11 +45,14 @@ async function convertToCsv(
   }
 }
 
-function flattenArrays(data) {
+function transformForCsv(data) {
   return data.map((d) => ({
     ...d,
     requested_reviewers: d.requested_reviewers.join(","),
     reviewers: d.reviewers.join(","),
+    created_at: toDateString(d.created_at),
+    closed_at: d.closed_at ? toDateString(d.closed_at) : "",
+    merged_at: d.merged_at ? toDateString(d.merged_at) : "",
   }));
 }
 
