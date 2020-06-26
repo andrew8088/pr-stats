@@ -36,13 +36,17 @@ async function convertToCsv(
     const data = JSON.parse(
       await readFile(path.join(storagePath, fromFilename))
     );
-    const parser = new Parser({ fields });
-    const csv = parser.parse(transformForCsv(data));
+    const csv = toCsv(data, fields, transformForCsv);
 
     await writeFile(path.join(storagePath, toFilename), csv);
   } catch (err) {
     console.error(err);
   }
+}
+
+function toCsv(data, fields, transform) {
+  const parser = new Parser({ fields });
+  return parser.parse(transform(data));
 }
 
 function transformForCsv(data) {
@@ -57,5 +61,6 @@ function transformForCsv(data) {
 }
 
 module.exports = {
+  toCsv,
   convertToCsv,
 };

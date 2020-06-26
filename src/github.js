@@ -18,6 +18,19 @@ async function getPullRequest(owner, repo, pull_number) {
     pull_number,
   });
 
+  for (let r of reviews) {
+    const { data: review_comments } = await octokit.pulls.listCommentsForReview(
+      {
+        owner,
+        repo,
+        pull_number,
+        review_id: r.id,
+      }
+    );
+
+    r.comments = review_comments;
+  }
+
   return {
     pullRequest,
     reviews,
