@@ -61,6 +61,7 @@ async function readPullRequest(storagePath, number) {
 }
 
 module.exports = {
+  toPath,
   readPullRequest,
   writePullRequest,
   storePullRequest,
