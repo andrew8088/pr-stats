@@ -1,15 +1,32 @@
 const assert = require("assert");
 const MongoClient = require("mongodb").MongoClient;
 
-function writeToCollection(collName, docs) {
-  return new Promise((resolve, reject) => {
+function dropDatabase(dbName) {
+  return new Promise((resolve) => {
+    MongoClient.connect(process.env.MONGODB_CONNECTION_URL, function (
+      err,
+      client
+    ) {
+      assert.equal(null, err);
+      const db = client.db(dbName);
+      db.dropDatabase(function (err, result) {
+        assert.equal(err, null);
+        resolve(result);
+        client.close();
+      });
+    });
+  });
+}
+
+function writeToCollection(dbName, collName, docs) {
+  return new Promise((resolve) => {
     MongoClient.connect(process.env.MONGODB_CONNECTION_URL, function (
       err,
       client
     ) {
       assert.equal(null, err);
 
-      const db = client.db("pull_request_data");
+      const db = client.db(dbName);
       const collection = db.collection(collName);
 
       collection.insertMany(docs, function (err, result) {
@@ -24,5 +41,6 @@ function writeToCollection(collName, docs) {
 }
 
 module.exports = {
+  dropDatabase,
   writeToCollection,
 };
