@@ -1,7 +1,9 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
 
 async function getModels() {
-  const sequelize = new Sequelize(process.env.POSTGRES_CONNECTION_URI);
+  const sequelize = new Sequelize(process.env.POSTGRES_CONNECTION_URI, {
+    logging: false,
+  });
   class PullRequest extends Model {}
   PullRequest.init(
     {
@@ -9,27 +11,27 @@ async function getModels() {
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
-      url: DataTypes.TEXT,
+      repo: DataTypes.TEXT,
       number: DataTypes.INTEGER,
       creator: DataTypes.TEXT,
       state: DataTypes.TEXT,
       title: DataTypes.TEXT,
-      body: DataTypes.TEXT,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
       closed_at: DataTypes.DATE,
       merged_at: DataTypes.DATE,
+      merged_by: DataTypes.TEXT,
       comment_count: DataTypes.INTEGER,
       review_comment_count: DataTypes.INTEGER,
       commits: DataTypes.INTEGER,
-      addition: DataTypes.INTEGER,
+      additions: DataTypes.INTEGER,
       deletions: DataTypes.INTEGER,
       changed_files: DataTypes.INTEGER,
-      repo: DataTypes.TEXT,
-      assignees: DataTypes.TEXT,
-      requested_reviewers: DataTypes.TEXT,
-      merged_by: DataTypes.TEXT,
+      assignees: DataTypes.JSONB,
+      requested_reviewers: DataTypes.JSONB,
       milestone: DataTypes.TEXT,
+      body: DataTypes.TEXT,
+      url: DataTypes.TEXT,
       head_label: DataTypes.TEXT,
       head_ref: DataTypes.TEXT,
       base_label: DataTypes.TEXT,
@@ -37,8 +39,8 @@ async function getModels() {
     },
     {
       sequelize,
-      modelName: "pull_request",
-      tabelName: "pull_requests",
+      timestamps: false,
+      tableName: "pull_requests",
     }
   );
 
@@ -57,8 +59,8 @@ async function getModels() {
     },
     {
       sequelize,
-      modelName: "review",
-      tabelName: "reviews",
+      tableName: "reviews",
+      timestamps: false,
     }
   );
 
@@ -82,8 +84,8 @@ async function getModels() {
     },
     {
       sequelize,
-      modelName: "comment",
-      tabelName: "comments",
+      timestamps: false,
+      tableName: "comments",
     }
   );
   await sequelize.sync();
@@ -92,9 +94,20 @@ async function getModels() {
     PullRequest,
     Review,
     Comment,
+    sequelize,
   };
+}
+
+function upsertById(model, id, values) {
+  return model.findByPk(id).then(function (obj) {
+    // update
+    if (obj) return obj.update(values);
+    // insert
+    return model.create(values);
+  });
 }
 
 module.exports = {
   getModels,
+  upsertById,
 };
